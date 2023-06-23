@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { MantineProvider, Text } from "@mantine/core";
 import { BrowserRouter, Routes, Route  } from "react-router-dom";
-import { Home } from './pages'
-import { Login } from "./pages/Login/Login"
+import { Home, Login } from './pages'
+import { auth } from "./config";
 
 function App() {
+  useEffect(()=>{
+    auth.onAuthStateChanged((user)=>{
+      if(user) console.log(user);
+      
+    })
+  }, [])
   return (
     <div className="App">
       <MantineProvider withGlobalStyles withNormalizeCSS>

@@ -1,5 +1,8 @@
 import { useToggle, upperFirst } from '@mantine/hooks';
 import { useForm } from '@mantine/form';
+import { auth } from '../../config'
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+
 import {
   TextInput,
   PasswordInput,
@@ -14,6 +17,15 @@ import {
   Stack,
 } from '@mantine/core';
 // import { GoogleButton, TwitterButton } from '../SocialButtons/SocialButtons';
+
+interface loginParams {
+    email : string;
+    password : string;
+}
+
+interface registerParams extends loginParams {
+    name : string
+}
 
 export function Login(props: PaperProps) {
   const [type, toggle] = useToggle(['login', 'register']);
@@ -31,6 +43,27 @@ export function Login(props: PaperProps) {
     },
   });
 
+  const login = async ({email, password} : loginParams) =>{
+    try {
+        const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+        console.log(userCredentials);
+    } catch (error) {
+        console.log(error);
+    }
+} 
+
+  const register = async ({email, password, name} : registerParams) =>{
+    try {
+        const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+        console.log(userCredentials);
+        const updateUserCredential = await updateProfile(userCredentials.user, {displayName: name})
+        console.log(updateUserCredential);
+        
+    } catch (error) {
+        console.log(error);
+    }
+} 
+
   return (
     <div style={{width: '90%', maxWidth: '400px', margin: 'auto'}}>
     <Paper radius="md" p="xl" withBorder {...props}>
@@ -45,7 +78,15 @@ export function Login(props: PaperProps) {
 
       <Divider label="Or continue with email" labelPosition="center" my="lg" />
 
-      <form onSubmit={form.onSubmit(() => {})}>
+      <form onSubmit={form.onSubmit(({ email, password, name }) => {
+        if(type === 'register'){
+            register({ email, password, name})
+        }
+        else{
+            login({ email, password})
+        }
+
+        })}>
         <Stack>
           {type === 'register' && (
             <TextInput
