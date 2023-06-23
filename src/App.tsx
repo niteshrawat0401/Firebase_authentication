@@ -12,7 +12,7 @@ function App() {
       <MantineProvider withGlobalStyles withNormalizeCSS>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<h1>Hello</h1>}/>
+              <Route path="/" element={<Home/>}/>
               <Route path="/auth" element={<Login/>}/>
             </Routes>
           </BrowserRouter>
